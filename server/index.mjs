@@ -10,7 +10,7 @@ const env=process.env, port=Number(env.PORT||(process.argv.includes('--port')?pr
 const allowed=new Set([new URL(origin).origin,...(env.STOREFRONT_ORIGINS||'').split(',').map(x=>x.trim()).filter(Boolean)]);
 mkdirSync(resolve(root,'.data'),{recursive:true,mode:0o700});
 const store=new Store(env.DATABASE_PATH||resolve(root,'.data/store.sqlite'));
-const types={'.html':'text/html; charset=utf-8','.css':'text/css; charset=utf-8','.js':'text/javascript; charset=utf-8','.json':'application/json','.webp':'image/webp'};
+const types={'.html':'text/html; charset=utf-8','.css':'text/css; charset=utf-8','.js':'text/javascript; charset=utf-8','.json':'application/json','.webp':'image/webp','.png':'image/png'};
 function settings(){const context={window:{}};runInNewContext(readFileSync(resolve(root,'dist/pricing-config.js'),'utf8'),context);return context.window.CHANCE2_PRICING;}
 function products(){return JSON.parse(readFileSync(resolve(root,'dist/catalog.json'),'utf8')).products;}
 function cardView(id){const card=store.card(id);if(!card)return null;const active=store.openOrder(id);return {...card,rewardAvailable:card.punches===5,rewardReserved:Boolean(active?.reward),pendingOrder:active?.id||null};}

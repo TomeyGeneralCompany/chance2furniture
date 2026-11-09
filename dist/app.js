@@ -48,7 +48,6 @@
   $('#cancel-checkout').onclick=async()=>{try{card=await request('/api/checkout/cancel',{method:'POST'});renderCard();$('#checkout-status').textContent='Pending checkout cancelled. Your punches are unchanged.';}catch(e){$('#checkout-status').textContent=e.message;}};
   const tileCategories=['Chairs & seating','Desks','Tables','Storage & shelving'];
   $('#category-tiles').innerHTML=tileCategories.map(c=>{const p=catalog.find(p=>category(p)===c);return `<button class="category-tile" data-category="${esc(c)}">${p?`<img src="${esc(p.image)}" alt="" loading="lazy">`:''}<span>${esc(c)} <b aria-hidden="true">↗</b></span></button>`;}).join('');
-  const hero=catalog.find(p=>p.sku==='LLR86200')||catalog.find(p=>category(p)==='Chairs & seating');if(hero){$('#hero-product').src=hero.image;$('#hero-product').alt=hero.name;}
   $('#year').textContent=new Date().getFullYear();render();bagChanged();renderCard();
   request('/api/config').then(c=>{config=c;renderCart();}).catch(()=>{});
   if(cardCode)ensureCard().catch(()=>{$('#reward-status').textContent='Your saved card will reconnect when the shop connection is available.';});
