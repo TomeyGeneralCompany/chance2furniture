@@ -28,7 +28,7 @@ def parse(raw):
             match = re.search(pattern, chunk, re.S)
             return html.unescape(match.group(1)).strip() if match else ''
         name = get(r'<span class="product-title">(.*?)</span>')
-        value = get(r'<p class="price-2"[^>]*>\$([\d,.]+)')
+        value = get(r'<p class="price-2(?:\s+(?!sl\b)[^"]*)?"[^>]*>\s*\$([\d,.]+)')
         if not name:
             continue
         url = get(r'<a href="([^"]+)"')
@@ -38,6 +38,8 @@ def parse(raw):
         out.append(dict(name=name, url=url, image=image,
             sku=get(r'data-product-mpn="([^"]+)"') or get(r'<span class="model">Model: (.*?)</span>'),
             supplierPrice=float(value.replace(',', '')) if value else None))
+    if any(p['supplierPrice'] is None or p['supplierPrice'] <= 0 for p in out):
+        raise ValueError('Missing or invalid supplier price; catalog was not replaced')
     if not out:
         raise ValueError('No products found; catalog was not replaced')
     return out

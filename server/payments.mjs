@@ -10,10 +10,9 @@ export function verifyWebhook(raw, signature, secret, now=Date.now()) {
   return JSON.parse(raw.toString());
 }
 export function retailCents(product, config) {
-  const shipping=config.supplierShippingBySku[product.sku]??config.defaultSupplierShipping;
-  if(product.supplierPrice==null||shipping==null) return null;
-  if(!Number.isFinite(product.supplierPrice)||!Number.isFinite(shipping)||shipping<0||product.supplierPrice<0||config.multiplier!==2.5) throw Error('Invalid retail pricing configuration');
-  return Math.round((product.supplierPrice+shipping)*config.multiplier*100);
+  if(product.supplierPrice==null) return null;
+  if(!Number.isFinite(product.supplierPrice)||product.supplierPrice<0||config.multiplier!==2.5) throw Error('Invalid retail pricing configuration');
+  return Math.round(Math.round(product.supplierPrice*100)*config.multiplier);
 }
 export async function stripeRequest(path, body, key, idempotency, fetcher=fetch) {
   const response=await fetcher('https://api.stripe.com/v1/'+path,{

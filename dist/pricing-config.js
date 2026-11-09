@@ -1,9 +1,2 @@
-// Retail price = (supplier product price + supplier shipping cost) × multiplier.
-// Amounts are USD per product unit. Null means unknown, never free shipping.
-window.CHANCE2_PRICING = {
-  multiplier: 2.5,
-  defaultSupplierShipping: null,
-  supplierShippingBySku: {
-    // "EXAMPLE-SKU": 25.00
-  }
-};
+// Product price = Office Crave product price × 2.5. Shipping is separate.
+window.CHANCE2_PRICING = { multiplier: 2.5 };

@@ -32,7 +32,7 @@ Paid events come from verified Stripe webhooks. Duplicate events do not add extr
 2. Set `PUBLIC_ORIGIN` to the HTTPS storefront origin used in Stripe return URLs. Set `STRIPE_SECRET_KEY` and `STRIPE_WEBHOOK_SECRET` in the host's environment/secret controls. Never commit real keys to GitHub or put them in `dist/`.
 3. Add the HTTPS backend endpoint `/api/stripe/webhook` in Stripe. Subscribe to `checkout.session.completed`, `checkout.session.async_payment_succeeded`, `checkout.session.expired`, and `checkout.session.async_payment_failed`.
 4. Set `CUSTOMER_SHIPPING_CENTS` to your customer-facing per-order delivery fee (an explicit `0` is allowed if that is your chosen policy). This fee is separate from supplier shipping used in landed-cost pricing. A variable shipping carrier/quote service is not connected.
-5. Configure actual supplier shipping costs by SKU (or a known default) in `dist/pricing-config.js`. Unknown costs deliberately remain unpriced and cannot be charged.
+5. Product prices use Office Crave’s product price × 2.5. Configure customer shipping separately.
 6. Start with Stripe **test** credentials and exercise five paid orders, the uncapped sixth-order discount, cancellation, duplicate webhook delivery, and a second cycle. Switch to live credentials only after your Stripe account and server endpoint are ready. No live payments have been tested in this repository.
 7. Set `STRIPE_AUTOMATIC_TAX=true` if Stripe Tax is configured for your business; otherwise tax calculation remains disabled. Checkout collects a US delivery address and phone number. Orders and customer details are available in your Stripe dashboard; the local ledger stores ordered items and links to each Checkout Session. Automated supplier purchasing is not included.
 
@@ -44,7 +44,7 @@ GitHub Pages can host `dist/` but cannot run the payment server or SQLite ledger
 
 ## Pricing
 
-**Retail = (supplier product price + supplier shipping cost per unit) × 2.5**, rounded to cents. Server totals are rebuilt from the catalog and pricing config; browser-submitted prices are never charged. Per-SKU supplier shipping overrides the default, including explicit zero. Unknown supplier prices or shipping require a quote. All supplier shipping inputs are currently unknown; set real values before opening checkout for those products.
+**Price = supplier product price × 2.5**, rounded to cents. Shipping is charged separately. Server totals are rebuilt from the catalog; browser-submitted prices are never charged. Missing supplier prices fail the catalog refresh.
 
 ## Catalog
 
