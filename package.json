@@ -1,0 +1,7 @@
+{
+  "name": "chance2furniture",
+  "private": true,
+  "type": "module",
+  "engines": {"node": ">=22.13.0"},
+  "scripts": {"start": "node --env-file-if-exists=.env server/index.mjs", "test": "node --test test/*.test.mjs", "dev": "node --env-file-if-exists=.env server/index.mjs"}
+}
