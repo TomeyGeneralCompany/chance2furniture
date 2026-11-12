@@ -1,13 +1,22 @@
 name: Refresh furniture catalog
 on:
+  schedule:
+    - cron: '17 * * * *'
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/refresh-catalog.yml'
+      - 'import_catalog.py'
   workflow_dispatch:
 permissions:
   contents: write
+  actions: write
 concurrency:
   group: catalog-refresh
   cancel-in-progress: false
 jobs:
   refresh:
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
@@ -16,12 +25,17 @@ jobs:
         with:
           python-version: '3.12'
       - run: python import_catalog.py
-      - name: Commit refreshed catalog
+      - name: Commit changed catalog and request Pages deployment
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
+          if git show HEAD:dist/catalog.json | jq -S 'del(.retrievedAt)' | diff -q - <(jq -S 'del(.retrievedAt)' dist/catalog.json); then
+            echo 'Catalog contents are unchanged.'
+            exit 0
+          fi
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add dist/catalog.json dist/catalog.js
-          if ! git diff --cached --quiet; then
-            git commit -m 'Refresh Office Crave furniture catalog'
-            git push
-          fi
+          git commit -m 'Refresh Office Crave furniture catalog'
+          git push origin HEAD:main
+          gh workflow run pages.yml --ref main
