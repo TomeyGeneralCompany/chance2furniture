@@ -1,12 +1,7 @@
 name: Refresh furniture catalog
 on:
   schedule:
-    - cron: '17 * * * *'
-  push:
-    branches: [main]
-    paths:
-      - '.github/workflows/refresh-catalog.yml'
-      - 'import_catalog.py'
+    - cron: '17 7 * * *'
   workflow_dispatch:
 permissions:
   contents: write
